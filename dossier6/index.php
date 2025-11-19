@@ -10,10 +10,9 @@ $mysqlClient =  new PDO(
     die($e->getMessage());
 } //pour connecter a la base de donee 
  
-$sort = "nom"; //
-
- 
-$order = "desc";
+//  Lire depuis l'URL au lieu de mettre en dur
+$sort = isset($_GET['sort']) ? $_GET['sort'] : "nom"; //
+$order = isset($_GET['order']) ? $_GET['order'] : "desc";
  
 
 $query = $mysqlClient->prepare('select * from jo.`100` ORDER BY '.$sort . ' ' . $order);
@@ -39,9 +38,9 @@ function changeorder($token){
     $temp++ ;
 }
    
- 
-$mysqlClient = null;
-$dbh = null;
+
+// $mysqlClient = null;
+// $dbh = null;
 
 
 ?>  
@@ -56,6 +55,51 @@ $dbh = null;
 
         </tr>
     </thead>
+
+
+   
+
+   <h1>Ajouter un résultat : </h1>
+<form method="post">
+    <label>Nom : </label>
+    <input type="text" name="nom"><br/>
+    
+ 
+    <label>Pays : </label>
+    <input type="text" name="pays"><br/>
+ 
+    <label>Course : </label>
+    <input type="text" name="course"><br/>
+ 
+    <label>Temps : </label>
+    <input type="number" name="temps">
+
+    <input type="submit" class="mt-3">
+ 
+</form>
+ 
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // pour voir si tt est bien rempli 
+    if (!empty($_POST['nom']) && !empty($_POST['pays']) && !empty($_POST['course']) && is_numeric($_POST['temps'])) {
+        $nom = $_POST['nom'];
+        $pays = $_POST['pays'];
+        $course = $_POST['course'];
+        $temps = $_POST['temps'];
+
+        // execute et insere 
+        $insert = $mysqlClient->prepare("INSERT INTO jo.`100` (nom, pays, course, temps) VALUES (:nom, :pays, :course, :temps)");
+        $insert->execute([
+            'nom' => $nom,
+            'pays' => $pays,
+            'course' => $course,
+            'temps' => $temps
+        ]);
+    }
+}
+
+?>
+
 <?php foreach($data as $value) { ?>
     <tr>
         <td><?php echo $value["nom"]; ?></td>
@@ -63,6 +107,10 @@ $dbh = null;
         <td><?php echo $value["course"]; ?></td>
         <td><?php echo $value["temps"]; ?></td>
     </tr>
+    
 <?php }  ?>  
 </table>
-<?php    // html 
+<?php 
+$mysqlClient = null; 
+// html 
+?>
