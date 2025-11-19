@@ -1,5 +1,5 @@
 <?php
-
+ 
 try {
 $mysqlClient =  new PDO(
     'mysql:host=localhost;dbname=jo;charset=utf8',
@@ -9,17 +9,17 @@ $mysqlClient =  new PDO(
 } catch(PDOexception $e){
     die($e->getMessage());
 }
-
-
+ 
+ 
 $query = $mysqlClient->prepare(query: "SELECT * FROM jo.`100`;");
 $query->execute();
-
+ 
 $data = $query->fetchAll();
 var_dump($data);
-
+ 
 $mysqlClient = null;
 $dbh = null;
-
+ 
 ?>
 <table>
     <thead>
@@ -30,7 +30,7 @@ $dbh = null;
             <th>Temps</th>
         </tr>
     </thead>
-
+ 
     <?php foreach ($data as $value) { ?>
         <tr>
             <td><?php echo $value["nom"]; ?></td>
@@ -40,7 +40,7 @@ $dbh = null;
         </tr>
     <?php } ?>
 </table>
-
-
-
+ 
+ 
+ 
 ?>
